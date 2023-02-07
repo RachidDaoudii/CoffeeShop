@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Plats;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class platsController extends Controller
 {
@@ -15,8 +17,15 @@ class platsController extends Controller
      */
     public function index()
     {
-        $plats = Plats::latest()->paginate(4);
-        return view('admin.plats',compact('plats'));
+        $plats = DB::table('plats')
+        ->join('model_categories','plats.id_category','model_categories.id')
+        ->select('plats.*','model_categories.name_category')
+        ->latest()->paginate(4);
+        // $plats = Plats::latest()->paginate(4);
+        // $plats = DB::table('plats')->get();
+        $categories =DB::table('model_categories')->get();
+
+        return view('admin.plats',compact('plats','categories'));
     }
 
     /**
@@ -42,11 +51,13 @@ class platsController extends Controller
             'name_plat'     => 'required',
             'description'   => 'required',
             'price'         => 'required',
+            'category'         => 'required',
         ],[
             'img_plat.required' => 'Please Input Plat image',
             'name_plat.required' => 'Please Input Plat name',
             'description.required' => 'Please Input Plat description',
             'price.required' => 'Please Input Plat price',
+            'category.required' => 'Please Input Plat category'
         ]);
 
         $plat_image = $request->file('img_plat');
@@ -60,6 +71,7 @@ class platsController extends Controller
         $store = Plats::insert([
             'img' => $last_img,
             'name' => $request->name_plat,
+            'id_category' =>$request->category,
             'description' => $request->description,
             'price' => $request->price,
             'created_at' => Carbon::now(),
@@ -78,7 +90,8 @@ class platsController extends Controller
     public function show($id)
     {
         $show = Plats::find($id);
-        return view('admin.editPlat',compact('show'));
+        $categories =DB::table('model_categories')->get();
+        return view('admin.editPlat',compact('show','categories'));
     }
 
     /**
@@ -106,11 +119,13 @@ class platsController extends Controller
             'name_plat'     => 'required',
             'description'   => 'required',
             'price'         => 'required',
+            'category'         => 'required',
         ],[
             'img_plat.required' => 'Please Input Plat image',
             'name_plat.required' => 'Please Input Plat name',
             'description.required' => 'Please Input Plat description',
             'price.required' => 'Please Input Plat price',
+            'category.required' => 'Please Input Plat category'
         ]);
 
         $old_img = $request->old_img;
@@ -130,6 +145,7 @@ class platsController extends Controller
             'name' => $request->name_plat,
             'description' => $request->description,
             'price' => $request->price,
+            'id_category' => $request->category,
             'created_at' => Carbon::now(),
         ]);
 
@@ -144,6 +160,11 @@ class platsController extends Controller
      */
     public function destroy($id)
     {
+        $img = Plats::find($id);
+        $old_img = $img->img;
+        unlink($old_img);
+        $delete = Plats::find($id)->delete();
+        
         return Redirect()->back()->with('success','Plat Deleted Successfull');
     }
 }

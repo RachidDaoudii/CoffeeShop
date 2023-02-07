@@ -34,6 +34,23 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
+                                <label for="exampleInputPassword1" class="form-label">Category</label>
+                                <select class="form-select" name="category">
+                                  <option selected>Open this select menu</option>
+                                  @foreach($categories as $category)
+                                    <option 
+                                        @if($show->id_category == $category->id)
+                                            selected = "selected"
+                                        @endif
+                                  value="{{ $category->id }}">{{ $category->name_category }}
+                                    </option>
+                                  @endforeach
+                                  @error('category')
+                                      <span class="text-danger">{{ $message }}</span>
+                                  @enderror
+                                </select>
+                              </div>
+                            <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">description</label>
                             <textarea class="form-control" name="description" id="exampleInputPassword1" >
                                 {{ $show->description }}

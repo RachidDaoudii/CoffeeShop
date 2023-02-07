@@ -13,6 +13,7 @@ class Plats extends Model
         'img',
         'name',
         'description',
-        'price'
+        'price',
+        'id_category'
     ];
 }

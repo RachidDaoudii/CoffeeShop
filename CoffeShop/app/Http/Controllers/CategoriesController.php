@@ -10,16 +10,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 
+
 class CategoriesController extends Controller
 {
     public function index()
     {
         // 1er methode
-        $categories = ModelCategories::latest()->paginate(4);
+        // $categories = ModelCategories::latest()->paginate(4);
         // 2eme metohde joint 
-        // $categories = DB::table('model_categories')
-        // ->join('users','model_categories.id_user','users.id')
-        // ->select('model_categories.*','users.name')->latest()->paginate(4);
+        $categories = DB::table('model_categories')
+        ->join('users','model_categories.id_user','users.id')
+        ->select('model_categories.*','users.name')->latest()->paginate(4);
         return view('admin.category',compact('categories'));
     }
 
@@ -52,7 +53,10 @@ class CategoriesController extends Controller
 
     public function Delete($id)
     {
-        $delete = ModelCategories::find($id)->delete();
+        // $delete = ModelCategories::onlyTrashed()->find($id)->forceDelete();
+        $delete = ModelCategories::find($id)->forceDelete();
+
+
         return Redirect()->back()->with('success','Category Deleted Successfull');
     }
 

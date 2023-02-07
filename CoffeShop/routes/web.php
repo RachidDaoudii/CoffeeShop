@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\platsController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Routing\RouteGroup;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,15 +19,18 @@ use Illuminate\Routing\RouteGroup;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $plats = DB::table('plats')->get();
+    return view('welcome',compact('plats'));
 });
+
+
 
 // Route categories
 Route::middleware(['auth','CheckAdmin'])->controller(CategoriesController::class)->group(function(){
     Route::get('/category/all','index')->name('all.category');
     Route::post('/category/add','store')->name('store.category');
     Route::get('/category/show/{id}','show')->name('show.category');
-    Route::get('/category/delete/{id}','delete')->name('delete.category');
+    Route::post('/category/delete/{id}','delete')->name('delete.category');
     Route::post('/category/update/{id}','update')->name('update.category');
 });
 

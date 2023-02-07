@@ -10,7 +10,7 @@
                 @if(session('success'))
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <strong>{{ session('success') }}</strong> 
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
                 </div>
                 @endif
                 <div class="card">
@@ -32,12 +32,15 @@
                                 @foreach ($categories as $category)
                                     <tr>
                                         <th scope="row">{{ $categories->firstItem()+$loop->index}}</th>
-                                        <td>{{ $category->id_user }}</td>
+                                        <td>{{ $category->name }}</td>
                                         <td>{{ $category->name_category }}</td>
                                         {{-- <td>{{ Carbon\Carbon::parse($category->creted_at)->diffForHumans() }}</td> --}}
                                         <td>
-                                            <a href="{{ url('category/delete/'.$category->id) }}" class="btn bg-danger">Delete</a>
-                                            <a href="{{ url('category/show/'.$category->id) }}" class="btn bg-info">Edit</a>
+                                            <form action="{{ url('category/delete/'.$category->id) }}" method="POST" >
+                                                @csrf
+                                                <button onclick="return confirm('Delete Category')" class="btn bg-danger">Delete</button>
+                                                <a href="{{ url('category/show/'.$category->id) }}" class="btn bg-info">Edit</a>
+                                            </form>
                                         </td>
                                   </tr>
                                 @endforeach
