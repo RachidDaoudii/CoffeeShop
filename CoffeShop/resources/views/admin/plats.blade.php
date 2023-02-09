@@ -8,6 +8,7 @@
     <div class="py-12 container">
         <div class="row">
             <div class="col-md-8">
+              <input type="text" class="form-control mb-3 rounded" placeholder="search">
                 @if(session('success'))
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <strong>{{ session('success') }}</strong> 
@@ -27,7 +28,7 @@
                                 <th scope="col">name</th>
                                 <th scope="col">description</th>
                                 <th scope="col">price</th>
-                                <th scope="col">id_category</th>
+                                <th scope="col">category</th>
                                 <th scope="col">action</th>
                               </tr>
                             </thead>
@@ -101,7 +102,7 @@
                     </div>
                     <div class="mb-3">
                       <label for="exampleInputPassword1" class="form-label">price</label>
-                      <input type="number" class="form-control" name="price" id="exampleInputPassword1">
+                      <input type="number" step="0.5" class="form-control" name="price" id="exampleInputPassword1">
                         @error('price')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror

@@ -12,9 +12,15 @@ class RoleController extends Controller
         $role = Auth::user()->role;
         
         if($role == 1){
-            return view('admin.dashboard');
+            // return view('dashboard');
+            return redirect()->route('dashboard'); 
+            // to_route('dashboard');
         }else{
-            return view('users.dashboard');
+            Auth::logout();
+            // return abort(401);
+            // return redirect()->route('dashboard/user'); 
+            // return to_route('dashboard.user');
+            return redirect()->route('dashboard.user');
         }
     }
 }

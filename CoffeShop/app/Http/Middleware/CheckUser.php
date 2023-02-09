@@ -19,8 +19,8 @@ class CheckUser
     public function handle(Request $request, Closure $next)
     {
         if(Auth()->user()->role == 0){
-            return $next($request);
-        }else{
+            // return $next($request);
+            Auth::logout();
             abort(401);
         }
         // return $next($request);

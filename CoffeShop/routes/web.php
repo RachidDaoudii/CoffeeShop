@@ -19,8 +19,12 @@ use Illuminate\Support\Facades\DB;
 */
 
 Route::get('/', function () {
-    $plats = DB::table('plats')->get();
-    return view('welcome',compact('plats'));
+    // $plats = DB::table('plats')->get();
+    $plats = DB::table('plats')
+        ->join('model_categories','plats.id_category','model_categories.id')
+        ->select('plats.*','model_categories.name_category')->get();
+        $categories =DB::table('model_categories')->get();
+    return view('welcome',compact('plats','categories'));
 });
 
 

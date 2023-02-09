@@ -20,7 +20,7 @@ class platsController extends Controller
         $plats = DB::table('plats')
         ->join('model_categories','plats.id_category','model_categories.id')
         ->select('plats.*','model_categories.name_category')
-        ->latest()->paginate(4);
+        ->latest()->paginate(8);
         // $plats = Plats::latest()->paginate(4);
         // $plats = DB::table('plats')->get();
         $categories =DB::table('model_categories')->get();
@@ -68,7 +68,11 @@ class platsController extends Controller
         $last_img = $location.$img_name;
         $plat_image->move($location,$img_name);
 
-        $store = Plats::insert([
+        // $store = Plats::insert([
+            
+        // ]);
+
+        DB::table('Plats')->insert([
             'img' => $last_img,
             'name' => $request->name_plat,
             'id_category' =>$request->category,
@@ -89,7 +93,9 @@ class platsController extends Controller
      */
     public function show($id)
     {
-        $show = Plats::find($id);
+        // $show = Plats::find($id);
+        $show = DB::table('Plats')->find($id);
+
         $categories =DB::table('model_categories')->get();
         return view('admin.editPlat',compact('show','categories'));
     }
@@ -115,13 +121,13 @@ class platsController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'img_plat'      => 'required|mimes:jpg,png,jpeg',
+            // 'img_plat'      => 'required|mimes:jpg,png,jpeg',
             'name_plat'     => 'required',
             'description'   => 'required',
             'price'         => 'required',
             'category'         => 'required',
         ],[
-            'img_plat.required' => 'Please Input Plat image',
+            // 'img_plat.required' => 'Please Input Plat image',
             'name_plat.required' => 'Please Input Plat name',
             'description.required' => 'Please Input Plat description',
             'price.required' => 'Please Input Plat price',
@@ -131,23 +137,47 @@ class platsController extends Controller
         $old_img = $request->old_img;
 
         $plat_image = $request->file('img_plat');
-        $name_gen = hexdec(uniqid());
-        $img_ext = strtolower($plat_image->getClientOriginalExtension());
-        $img_name = $name_gen.'.'.$img_ext;
-        $location = 'img/plats/';
-        $last_img = $location.$img_name;
-        $plat_image->move($location,$img_name);
+        if($plat_image == null){
 
-        unlink($old_img);
+            // 1er methode
+            // $update = Plats::find($id)->update([
+            //     'img' => $old_img,
+            //     'name' => $request->name_plat,
+            //     'description' => $request->description,
+            //     'price' => $request->price,
+            //     'id_category' => $request->category,
+            //     'created_at' => Carbon::now(),
+            // ]);
+            // 2eme methode
+            DB::table('Plats')->where('id',$id)->update([
+                'img' => $old_img,
+                'name' => $request->name_plat,
+                'id_category' =>$request->category,
+                'description' => $request->description,
+                'price' => $request->price,
+                'created_at' => Carbon::now(),
+            ]);
 
-        $update = Plats::find($id)->update([
-            'img' => $last_img,
-            'name' => $request->name_plat,
-            'description' => $request->description,
-            'price' => $request->price,
-            'id_category' => $request->category,
-            'created_at' => Carbon::now(),
-        ]);
+        }else{
+            $name_gen = hexdec(uniqid());
+            $img_ext = strtolower($plat_image->getClientOriginalExtension());
+            $img_name = $name_gen.'.'.$img_ext;
+            $location = 'img/plats/';
+            $last_img = $location.$img_name;
+            $plat_image->move($location,$img_name);
+
+            unlink($old_img);
+
+            DB::table('Plats')->where('id',$id)->update([
+                'img' => $last_img,
+                'name' => $request->name_plat,
+                'id_category' =>$request->category,
+                'description' => $request->description,
+                'price' => $request->price,
+                'created_at' => Carbon::now(),
+            ]);
+        }
+        
 
         return to_route('plats.index')->with('success','Plat Updated Successfull');
     }
@@ -164,6 +194,7 @@ class platsController extends Controller
         $old_img = $img->img;
         unlink($old_img);
         $delete = Plats::find($id)->delete();
+        // DB::table('Plats')->where('id',$id)->delete();
         
         return Redirect()->back()->with('success','Plat Deleted Successfull');
     }
