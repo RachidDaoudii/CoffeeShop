@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\DB;
 |
 */
 
+//route verify email
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware(['auth'])->name('verification.notice');
+
 Route::get('/', function () {
     // $plats = DB::table('plats')->get();
     $plats = DB::table('plats')
@@ -26,8 +31,6 @@ Route::get('/', function () {
         $categories =DB::table('model_categories')->get();
     return view('welcome',compact('plats','categories'));
 });
-
-
 
 // Route categories
 Route::middleware(['auth','CheckAdmin'])->controller(CategoriesController::class)->group(function(){
@@ -50,12 +53,12 @@ Route::middleware(['auth','CheckAdmin'])->resource('plats',PlatsController::clas
 // });
 
 // Route check (user or admin)
-Route::get('users','App\Http\Controllers\RoleController@isAdmin')->middleware('auth');
+Route::get('users','App\Http\Controllers\RoleController@isAdmin')->middleware('auth','verified');
 
 // Route redirect dashboard user
 Route::get('/dashboard/user', function () {
     return view('users.dashboard');
-})->name('dashboard.user')->middleware('auth','CheckUser');
+})->name('dashboard.user')->middleware('auth','CheckUser','verified');
 
 Route::middleware([
     'auth:sanctum',
