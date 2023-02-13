@@ -24,7 +24,6 @@ Route::get('/email/verify', function () {
 })->middleware(['auth'])->name('verification.notice');
 
 Route::get('/', function () {
-    // $plats = DB::table('plats')->get();
     $plats = DB::table('plats')
         ->join('model_categories','plats.id_category','model_categories.id')
         ->select('plats.*','model_categories.name_category')->get();

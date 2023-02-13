@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -14,13 +15,13 @@ class RoleController extends Controller
         if($role == 1){
             // return view('dashboard');
             return redirect()->route('dashboard'); 
-            // to_route('dashboard');
+            // return to_route('dashboard');
         }else{
             Auth::logout();
-            // return abort(401);
+            return abort(401);
             // return redirect()->route('dashboard/user'); 
             // return to_route('dashboard.user');
-            return redirect()->route('dashboard.user');
         }
     }
+
 }
